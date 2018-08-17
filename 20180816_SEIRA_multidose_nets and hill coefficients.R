@@ -505,7 +505,8 @@ for (i in 1:7){
       )
     ) +
     # coord_cartesian(xlim = c(0.1, 100), ylim = c(1, 10000)) +
-    geom_point(data = subdataset, aes(x=halflifeMean, y=cmaxMean))#, shape = factor(route), color = factor(host) ))
+    geom_point(data = subdataset, aes(x=halflifeMean, y=cmaxMean, shape=as.factor(subdataset$route)), color = as.numeric(subdataset$host))
+  
   
   pltlist[[i]] <- p1
   
