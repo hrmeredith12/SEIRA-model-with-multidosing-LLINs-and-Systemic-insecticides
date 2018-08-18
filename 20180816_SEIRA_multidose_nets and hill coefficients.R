@@ -2,7 +2,7 @@
 # endectocide applied once.
 # improved simulation of LLINs (Hill coef and better concentrations for LC50)
 # by Hannah Meredith
-# Updated: August 16, 2018
+# Updated: August 18, 2018
 
 # libraries
 
@@ -454,7 +454,7 @@ dataset.df$loopID <- ifelse(is.na(dataset.df$cmaxMean),0,
 
 pltlist <- list()
 # set shape by route
-shapes <- c(0, 24,22,23,21,25)
+shapes <- c(4,24,22,23,21,25)
 names(shapes) <- levels(dataset.df$route)
 # set color by host
 gg_color_hue <- function(n) { # ggplot default colors
@@ -517,15 +517,38 @@ for (i in 1:7){
     ) +
     coord_cartesian(xlim = c(0.1, 100), ylim = c(1, 10000)) +
    
-    geom_point(data = subdataset.df, aes(x=halflifeMean, y=cmaxMean, shape=as.factor(route),fill=host)) +
-    scale_shape_manual(values=shapes) + scale_fill_manual(values=colors)
+    geom_point(data = subdataset.df,
+               aes(x = halflifeMean,
+                   y = cmaxMean,
+                   shape = as.factor(route),
+                   fill = host)) +
+    scale_shape_manual(values = shapes, drop = FALSE) +
+    scale_fill_manual(values = colors, drop = FALSE,
+      guide = guide_legend(override.aes = list(shape = 21)
+      ))
 
   
   pltlist[[i]] <- p1
   
 }
 
+get_legend<-function(myggplot){
+  tmp <- ggplot_gtable(ggplot_build(myggplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)
+}
+
+legend <- get_legend(p1)
 
 
-grid.arrange(pltlist[[1]],pltlist[[2]],pltlist[[3]],pltlist[[4]],pltlist[[5]],pltlist[[6]],pltlist[[7]],nrow=2,ncol=4)  # order of plots: (1) Eprinomectin, (2) Ivermectin, (3) Fluralaner, (4) Doramectin, (5) Afoxalaner, (6) Spinosad, (7) Moxidectin 
-
+grid.arrange(pltlist[[1]] + theme(legend.position = "none"),
+             pltlist[[2]] + theme(legend.position = "none"),
+             pltlist[[3]] + theme(legend.position = "none"),
+             pltlist[[4]] + theme(legend.position = "none"),
+             pltlist[[5]] + theme(legend.position = "none"),
+             pltlist[[6]] + theme(legend.position = "none"),
+             pltlist[[7]] + theme(legend.position = "none"),
+             legend,
+             nrow=2,ncol=4)  
+# order of plots: (1) Eprinomectin, (2) Ivermectin, (3) Fluralaner, (4) Doramectin, (5) Afoxalaner, (6) Spinosad, (7) Moxidectin 
